@@ -91,7 +91,8 @@ final class Component implements \Mosaic\Common\Components\Component
     }
 
     /**
-     * @param  array $settings
+     * @param  string $bucket
+     * @param  array  $settings
      * @return $this
      */
     public function aws(string $bucket, array $settings)
