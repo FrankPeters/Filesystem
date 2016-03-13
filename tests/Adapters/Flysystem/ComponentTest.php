@@ -83,6 +83,24 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Closure::class, $adapter);
     }
 
+    public function test_can_add_memory_disk()
+    {
+        $this->component->memory();
+
+        $adapter = $this->component->getDiskResolvers()->get('memory');
+
+        $this->assertInstanceOf(Closure::class, $adapter);
+    }
+
+    public function test_can_add_memory_disk_with_custom_name()
+    {
+        $this->component->memory('customMemoryDisk');
+
+        $adapter = $this->component->getDiskResolvers()->get('customMemoryDisk');
+
+        $this->assertInstanceOf(Closure::class, $adapter);
+    }
+
     public function test_can_add_extensions()
     {
         Component::extend('foo', function () {

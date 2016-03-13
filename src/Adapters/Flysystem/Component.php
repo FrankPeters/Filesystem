@@ -10,6 +10,7 @@ use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Dropbox\DropboxAdapter;
+use League\Flysystem\Memory\MemoryAdapter;
 use Mosaic\Common\Conventions\FolderStructureConvention;
 use Mosaic\Filesystem\Providers\FlystemProvider;
 
@@ -118,6 +119,19 @@ final class Component implements \Mosaic\Common\Components\Component
             return new DropboxAdapter(
                 new Client($accessToken, $appSecret)
             );
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string $diskName
+     * @return $this
+     */
+    public function memory(string $diskName = 'memory')
+    {
+        $this->disk($diskName, function () {
+            return new MemoryAdapter();
         });
 
         return $this;
