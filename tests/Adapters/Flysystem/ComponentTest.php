@@ -7,6 +7,7 @@ use Closure;
 use League\Flysystem\Adapter\Local;
 use Mosaic\Common\Conventions\DefaultFolderStructure;
 use Mosaic\Filesystem\Adapters\Flysystem\Component;
+use Mosaic\Filesystem\Adapters\Flysystem\Rackspace\Container;
 use Mosaic\Filesystem\Providers\FlystemProvider;
 
 class ComponentTest extends \PHPUnit_Framework_TestCase
@@ -97,6 +98,20 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
         $this->component->memory('customMemoryDisk');
 
         $adapter = $this->component->getDiskResolvers()->get('customMemoryDisk');
+
+        $this->assertInstanceOf(Closure::class, $adapter);
+    }
+
+    public function test_can_add_rackspace_disk()
+    {
+        $container = (new Container('container', 'endpoint', 'username', 'password'))
+            ->setObjectStoreLocation('LON')
+            ->setObjectStoreName('cloudFiles')
+            ->setOptions(['customOption' => true]);
+
+        $this->component->rackspace($container, 'customRackspace');
+
+        $adapter = $this->component->getDiskResolvers()->get('customRackspace');
 
         $this->assertInstanceOf(Closure::class, $adapter);
     }

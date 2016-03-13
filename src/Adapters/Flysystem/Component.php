@@ -11,8 +11,11 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Dropbox\DropboxAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
+use League\Flysystem\Rackspace\RackspaceAdapter;
 use Mosaic\Common\Conventions\FolderStructureConvention;
+use Mosaic\Filesystem\Adapters\Flysystem\Rackspace\Container;
 use Mosaic\Filesystem\Providers\FlystemProvider;
+use OpenCloud\OpenStack;
 
 final class Component implements \Mosaic\Common\Components\Component
 {
@@ -132,6 +135,29 @@ final class Component implements \Mosaic\Common\Components\Component
     {
         $this->disk($diskName, function () {
             return new MemoryAdapter();
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param Container $container
+     * @param string    $diskName
+     *
+     * @return $this
+     */
+    public function rackspace(Container $container, string $diskName)
+    {
+        $this->disk($diskName, function () use ($container) {
+            $client = new OpenStack($container->getEndpoint(), [
+                'username' => $container->getUsername(),
+                'password' => $container->getPassword(),
+            ], $container->getOptions());
+
+            $store     = $client->objectStoreService($container->getObjectStoreName(), $container->getObjectStoreLocation());
+            $container = $store->getContainer($container->getName());
+
+            return new RackspaceAdapter($container);
         });
 
         return $this;
